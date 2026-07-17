@@ -20,9 +20,11 @@ resource "akp_kargo_instance" "kargo" {
     spec = {
       version = var.kargo_version
       kargo_instance_spec = {
-        # Runs the promotion controller on the Akuity-hosted control plane so
-        # promotions work even before any self-hosted agent is registered.
-        promo_controller_enabled = true
+        # Whether to run the promotion controller on the Akuity-hosted control
+        # plane (promotions work before any self-hosted agent is registered).
+        # Set false if your agents run promotions — an agent integrated with
+        # Argo CD is required either way for argocd-update steps; see 03.
+        promo_controller_enabled = var.promo_controller_enabled
       }
     }
   }
@@ -64,12 +66,21 @@ resource "akp_cluster" "kargo" {
   namespace   = "akuity"
 
   spec = {
+    # Explicit rather than defaulted: this attribute forces REPLACEMENT when
+    # it differs, and the platform stores `false` — leaving it unset makes
+    # `terraform import` of an existing registration plan a destroy/recreate.
+    namespace_scoped = false
+    # The platform normalizes unset strings to "" — explicit "" (here and on
+    # data.project below) keeps imported resources at zero diff.
+    description = ""
+
     data = {
       direct_cluster_spec = {
         kargo_instance_id = akp_kargo_instance.kargo.id
         cluster_type      = "kargo"
       }
-      size = "small"
+      size    = "small"
+      project = ""
     }
   }
 

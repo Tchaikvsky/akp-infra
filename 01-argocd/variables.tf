@@ -10,9 +10,9 @@ variable "argocd_instance_name" {
 }
 
 variable "argocd_version" {
-  description = "Argo CD version to deploy (Akuity build, e.g. v3.3.9-ak.87)"
+  description = "Argo CD version to deploy (Akuity build, e.g. v3.4.3-ak.92)"
   type        = string
-  default     = "v3.3.9-ak.87"
+  default     = "v3.4.3-ak.92"
 }
 
 variable "admin_password" {
