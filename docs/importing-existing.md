@@ -89,3 +89,38 @@ terraform plan
 - **The `kargo` wiring cluster:** if you previously connected Kargo to Argo CD
   via the UI, import that registration into `02-kargo`'s `akp_cluster.kargo`
   rather than letting Terraform create a second one.
+
+## Verified import cheat sheet (provider v0.13.0)
+
+| Resource | Import ID | Example |
+|---|---|---|
+| `akp_instance` | instance **name** | `terraform import akp_instance.argocd quickstart-argocd` |
+| `akp_kargo_instance` | instance **name** | `terraform import akp_kargo_instance.kargo quickstart-kargo` |
+| `akp_cluster` | `<argocd_instance_id>/<cluster_name>` | `terraform import 'module.cluster["c1"].akp_cluster.this' 7clec.../c1` |
+| `akp_kargo_agent` | `<kargo_instance_id>/<agent_name>` | blocked — see known issues below |
+
+Attributes that must be explicit in config or imports plan a REPLACE/UPDATE:
+
+- `akp_cluster.spec.namespace_scoped = false` — **replacement-forcing** when
+  left unset; always pin it.
+- `spec.description = ""` and `spec.data.project = ""` — the platform
+  normalizes unset strings to `""`.
+- `spec.data.size` — match what the platform reports (e.g. `"auto"`), not
+  what you assume.
+
+## Known provider issues (observed with v0.13.0)
+
+1. **`akp_kargo_agent` cannot be imported** when the org uses workspaces: the
+   provider's workspace resolution scans workspaces instead of using the
+   `workspace_id` already present in the instance response, queries the wrong
+   workspace, and the resulting `PermissionDenied` is surfaced as
+   "Cannot import non-existent remote object".
+   **Workaround:** set `manage_kargo_agent = false` on the adopted cluster and
+   leave the existing agent unmanaged.
+2. **Updates to an imported `akp_cluster` can fail** with
+   `invalid Cluster spec: parsing time "" as "2006-01-02T15:04:05Z07:00"` —
+   the update RPC serializes an empty `maintenance_mode_expiry`.
+   **Workaround:** set `adopted = true` on the cluster so the config exactly
+   matches imported state (no kube_config, no ensure_healthy) and no update
+   RPC is ever issued. Remove the flag once the provider is fixed and you
+   want Terraform to manage agent manifests/kustomization.

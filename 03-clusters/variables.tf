@@ -43,6 +43,16 @@ variable "clusters" {
     size                 = optional(string, "small")
     labels               = optional(map(string), {})
     tune_agent_resources = optional(bool, false)
+    # Kargo agent name; defaults to the cluster name. Override when adopting
+    # an existing agent that was registered under a different name.
+    kargo_agent_name = optional(string)
+    # Set false to leave a pre-existing Kargo agent unmanaged (adoption
+    # escape hatch — see docs/importing-existing.md).
+    manage_kargo_agent = optional(bool, true)
+    # Cluster registered outside Terraform and imported: skip the
+    # agent-install kubeconfig and health gating so no update RPC is issued
+    # (see docs/importing-existing.md).
+    adopted = optional(bool, false)
   }))
 }
 

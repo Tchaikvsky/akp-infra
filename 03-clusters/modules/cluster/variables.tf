@@ -32,6 +32,24 @@ variable "tune_agent_resources" {
   default     = false
 }
 
+variable "adopted" {
+  description = "This cluster was registered outside Terraform and imported. Skips the agent-install kubeconfig and health gating so adoption requires no update RPC (works around provider update bugs on imported clusters — see docs/importing-existing.md)."
+  type        = bool
+  default     = false
+}
+
+variable "manage_kargo_agent" {
+  description = "Manage this cluster's Kargo agent with Terraform. Set false to adopt a cluster whose agent already exists outside Terraform (see docs/importing-existing.md)."
+  type        = bool
+  default     = true
+}
+
+variable "kargo_agent_name" {
+  description = "Name for the Kargo agent. Defaults to the cluster name; override when adopting an existing agent registered under a different name."
+  type        = string
+  default     = null
+}
+
 variable "kustomization_path" {
   description = "Path to the kustomization.yaml applied to agent manifests when tune_agent_resources is true"
   type        = string

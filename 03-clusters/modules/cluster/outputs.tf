@@ -4,6 +4,6 @@ output "argocd_cluster_id" {
 }
 
 output "kargo_agent_id" {
-  description = "Kargo agent ID — used by the root stack to set the default shard"
-  value       = akp_kargo_agent.this.id
+  description = "Kargo agent ID — used by the root stack to set the default shard. Null when manage_kargo_agent = false."
+  value       = try(akp_kargo_agent.this[0].id, null)
 }

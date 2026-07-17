@@ -28,6 +28,9 @@ module "cluster" {
   size                 = each.value.size
   labels               = each.value.labels
   tune_agent_resources = each.value.tune_agent_resources
+  kargo_agent_name     = each.value.kargo_agent_name
+  manage_kargo_agent   = each.value.manage_kargo_agent
+  adopted              = each.value.adopted
   kustomization_path   = "${path.module}/templates/kustomization.yaml"
 
   argocd_instance_id = data.akp_instance.argocd.id

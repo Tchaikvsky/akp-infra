@@ -68,8 +68,17 @@ resource "akp_cluster" "this" {
   labels = var.labels
 
   spec = {
+    # Explicit rather than defaulted: namespace_scoped forces REPLACEMENT when
+    # it differs, and the platform stores `false` — leaving it unset makes
+    # `terraform import` of an existing registration plan a destroy/recreate.
+    # description/project: the platform normalizes unset strings to "", so
+    # explicit "" keeps imported resources at zero diff.
+    namespace_scoped = false
+    description      = ""
+
     data = {
-      size = var.size
+      size    = var.size
+      project = ""
 
       # GOTCHA: on small/local clusters (k3d, kind, minikube) the default agent
       # CPU requests can exceed what's schedulable and leave pods Pending. The
@@ -79,14 +88,16 @@ resource "akp_cluster" "this" {
     }
   }
 
-  kube_config = local.kube_config
+  # Adopted clusters: no kube_config and no health gate, so the plan exactly
+  # matches imported state and no update RPC is issued.
+  kube_config = var.adopted ? null : local.kube_config
 
   # GOTCHA: ensure_healthy makes the apply BLOCK until the agent reports
   # healthy on the platform — so a successful apply means a live agent, and
   # stack ordering (03 after 01/02) is genuinely sequential. If the apply hangs
   # here, the agent pods are the first place to look:
   #   kubectl -n akuity get pods
-  ensure_healthy = true
+  ensure_healthy = var.adopted ? false : true
 }
 
 # ── Kargo agent registration ───────────────────────────────────────────────────
@@ -96,9 +107,15 @@ resource "akp_cluster" "this" {
 # observe/trigger the corresponding Argo CD Application on this instance.
 
 resource "akp_kargo_agent" "this" {
+  # manage_kargo_agent = false skips this resource — for adopting a cluster
+  # whose Kargo agent already exists but cannot be imported (see the known
+  # provider issue in docs/importing-existing.md: the agent read resolves the
+  # wrong workspace and fails with PermissionDenied).
+  count = var.manage_kargo_agent ? 1 : 0
+
   instance_id                 = var.kargo_instance_id
   workspace                   = "default"
-  name                        = var.name
+  name                        = coalesce(var.kargo_agent_name, var.name)
   namespace                   = "akuity"
   reapply_manifests_on_update = true
 
