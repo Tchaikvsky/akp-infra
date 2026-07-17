@@ -1,0 +1,12 @@
+# Terraform working directories and state — state can contain secrets; use a
+# remote backend for anything beyond local experimentation (see README).
+.terraform/
+*.tfstate
+*.tfstate.*
+
+# Variable files may contain org-specific values; only the examples are committed.
+*.tfvars
+!*.tfvars.example
+
+# Cluster credentials
+.kubeconfigs/

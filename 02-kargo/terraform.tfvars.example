@@ -1,0 +1,13 @@
+# Copy to terraform.tfvars and fill in your values.
+# terraform.tfvars is gitignored — never commit it.
+
+org_name = "example-org"
+
+# Must match the instance created by 01-argocd (looked up by name).
+argocd_instance_name = "quickstart-argocd"
+
+kargo_instance_name = "quickstart-kargo"
+
+# Set the admin password via env var to keep it out of files:
+#   export TF_VAR_admin_password="..."
+# admin_password = "..."

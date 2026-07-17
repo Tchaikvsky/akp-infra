@@ -1,0 +1,28 @@
+# Copy to terraform.tfvars and fill in your values.
+# terraform.tfvars is gitignored — never commit it.
+
+org_name = "example-org"
+
+# Must match the instances created by 01-argocd and 02-kargo (looked up by name).
+argocd_instance_name = "quickstart-argocd"
+kargo_instance_name  = "quickstart-kargo"
+
+# Workload clusters to register. Kubeconfigs stay on your machine and are
+# gitignored (keep them under .kubeconfigs/ if you copy them into this repo).
+clusters = {
+  demo1 = {
+    kubeconfig_path      = ".kubeconfigs/demo1.yaml"
+    tune_agent_resources = true # recommended for k3d/kind/minikube
+  }
+  # demo2 = {
+  #   kubeconfig_path    = ".kubeconfigs/demo2.yaml"
+  #   kubeconfig_context = "k3d-demo2"   # optional; defaults to current-context
+  #   size               = "small"
+  #   # GOTCHA: add fleet/addon labels only AFTER the first apply succeeds and
+  #   # the agent shows healthy — two-phase registration (see docs/day-2.md).
+  #   # labels           = { fleet = "true" }
+  # }
+}
+
+# Optional: which cluster's Kargo agent runs promotions by default.
+kargo_default_shard = "demo1"
