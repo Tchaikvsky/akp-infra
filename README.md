@@ -66,7 +66,7 @@ Key ideas:
 
 - An **Akuity Platform organization** ([sign up](https://akuity.io))
 - An **API key with org-admin permissions** — [create one](https://docs.akuity.io/akuity-portal/organizations/api-keys/) in the portal
-- **Terraform >= 1.5** — `brew install terraform`
+- **Terraform >= 1.5** — `brew tap hashicorp/tap && brew install hashicorp/tap/terraform`
 - For step 3: one or more Kubernetes clusters and **kubeconfigs with embedded client certificates** (k3d/kind/minikube kubeconfigs work as-is; see the note on EKS/GKE/AKS in `03-clusters/modules/cluster/main.tf`)
 - Optional, for verification: the [`argocd` CLI](https://argo-cd.readthedocs.io/en/stable/cli_installation/)
 
