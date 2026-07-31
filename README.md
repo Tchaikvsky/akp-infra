@@ -13,8 +13,8 @@ This repo stands on its own — you end with a fully wired GitOps + promotion co
 | Repo | Role |
 |---|---|
 | **akp-infra** (this repo) | The *platform layer*: instances, wiring, cluster/agent registration — Terraform |
-| [akp-platform](https://github.com/example-org/akp-platform) | The *GitOps config layer*: Applications, ApplicationSets, Kargo pipelines — synced by the Argo CD instance you create here |
-| [akp-monorepo](https://github.com/example-org/akp-monorepo) | The *application layer*: app source code and images that flow through the pipelines |
+| [akp-platform](https://github.com/akuity/akp-platform) | The *GitOps config layer*: Applications, ApplicationSets, Kargo pipelines — synced by the Argo CD instance you create here |
+| [akp-monorepo](https://github.com/akuity/akp-monorepo) | The *application layer*: app source code and images that flow through the pipelines |
 
 ## Why declarative Akuity management?
 
@@ -189,7 +189,7 @@ If both are true, the platform layer is done: Argo CD can deploy to every cluste
 
 ## Where to next
 
-- **Bootstrap GitOps** — point the Argo CD instance at [akp-platform](https://github.com/example-org/akp-platform) and let its app-of-apps take over: apps, addons, and Kargo pipelines all from Git. (The `kargo` cluster destination and any `fleet` labels you added here are what its ApplicationSets key on.)
+- **Bootstrap GitOps** — point the Argo CD instance at [akp-platform](https://github.com/akuity/akp-platform) and let its app-of-apps take over: apps, addons, and Kargo pipelines all from Git. (The `kargo` cluster destination and any `fleet` labels you added here are what its ApplicationSets key on.)
 - **Adopt existing resources** — already have UI-created instances or clusters? [docs/importing-existing.md](docs/importing-existing.md) walks through `terraform import`.
 - **Run it like production** — drift detection, version upgrades, password rotation, cluster add/remove, remote state: [docs/day-2.md](docs/day-2.md).
 
